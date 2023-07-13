@@ -1,16 +1,5 @@
 'use client';
-import {
-    Paper,
-    createStyles,
-    TextInput,
-    PasswordInput,
-    Checkbox,
-    Button,
-    Title,
-    Text,
-    Anchor,
-    rem,
-} from '@mantine/core';
+import {Anchor, Button, createStyles, Paper, PasswordInput, rem, Text, TextInput, Title,} from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
