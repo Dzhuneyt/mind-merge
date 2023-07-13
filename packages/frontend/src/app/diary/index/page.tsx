@@ -1,4 +1,4 @@
-const DiaryList = ()=>{
-    return "My diary list"
+const DiaryList = () => {
+    return "My documents list"
 }
 export default DiaryList

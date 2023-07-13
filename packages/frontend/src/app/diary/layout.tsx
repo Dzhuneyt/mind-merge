@@ -11,9 +11,9 @@ export default function DiaryLayout({
         <AppShell
             padding="md"
             navbar={<Navbar width={{base: 300}} height={500} p="xs">
-                Diary here
+                My documents here
             </Navbar>}
-            header={<Header height={60} p="xs">Docs Repository</Header>}
+            header={<Header height={60} p="xs">Doction</Header>}
             styles={(theme) => ({
                 main: {backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]},
             })}
