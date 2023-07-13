@@ -13,6 +13,7 @@ Amplify.configure({
         identityPoolId: process.env.NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID,
         region: process.env.NEXT_PUBLIC_COGNITO_REGION,
         userPoolId: process.env.NEXT_PUBLIC_COGNITO_USERPOOL_ID,
+        userPoolWebClientId: process.env.NEXT_PUBLIC_COGNITO_USERPOOL_CLIENT_ID,
     }
 });
 

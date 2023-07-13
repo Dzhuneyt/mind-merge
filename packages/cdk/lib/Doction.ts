@@ -12,6 +12,10 @@ export class Doction extends cdk.Stack {
             selfSignUpEnabled: true,
             removalPolicy: cdk.RemovalPolicy.DESTROY,
         })
+        new CfnOutput(userPool, 'UserPoolId', {
+            value: userPool.userPoolId,
+        })
+
         const identityPool = new IdentityPool(this, 'IdentityPool', {
             authenticationProviders: {
                 userPools: [new UserPoolAuthenticationProvider({userPool})],
@@ -21,8 +25,14 @@ export class Doction extends cdk.Stack {
             value: identityPool.identityPoolId,
         })
 
-        new CfnOutput(userPool, 'UserPoolId', {
-            value: userPool.userPoolId,
+        const userPoolClient = userPool.addClient('web', {
+            authFlows: {
+                userPassword: true,
+                userSrp: true,
+            },
+        })
+        new CfnOutput(userPoolClient, 'UserPoolClientId', {
+            value: userPoolClient.userPoolClientId,
         })
     }
 }
