@@ -8,7 +8,13 @@ import {Amplify} from "aws-amplify";
 
 const inter = Inter({subsets: ['latin']})
 
-Amplify.configure({});
+Amplify.configure({
+    Auth: {
+        identityPoolId: process.env.NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID,
+        region: process.env.NEXT_PUBLIC_COGNITO_REGION,
+        userPoolId: process.env.NEXT_PUBLIC_COGNITO_USERPOOL_ID,
+    }
+});
 
 export default function RootLayout({
                                        children,
