@@ -1,5 +1,8 @@
 'use client';
 import {Anchor, Button, createStyles, Paper, PasswordInput, rem, Text, TextInput, Title,} from '@mantine/core';
+import {useForm} from "@mantine/form";
+import Auth from '@aws-amplify/auth';
+import {useCallback} from "react";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -30,6 +33,25 @@ const useStyles = createStyles((theme) => ({
 
 export function AuthenticationImage() {
     const {classes} = useStyles();
+
+    const form = useForm({
+        initialValues: {
+            email: '',
+            password: '',
+        },
+
+        validate: {
+            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+        },
+    });
+
+    const login = useCallback(async (email: string, password: string) => {
+        const r = await Auth.signIn({
+            username: email,
+            password,
+        })
+        console.log(r);
+    }, [])
     return (
         <div className={classes.wrapper}>
             <Paper className={classes.form} radius={0} p={30}>
@@ -37,11 +59,24 @@ export function AuthenticationImage() {
                     Welcome back to Doction!
                 </Title>
 
-                <TextInput label="Email address" placeholder="hello@gmail.com" size="md"/>
-                <PasswordInput label="Password" placeholder="Your password" mt="md" size="md"/>
-                <Button fullWidth mt="xl" size="md">
-                    Login
-                </Button>
+                <form onSubmit={form.onSubmit((values) => {
+                    login(values.email, values.password).then()
+                })}>
+                    <TextInput withAsterisk
+                               {...form.getInputProps('email')}
+                               label="Email address"
+                               placeholder="hello@gmail.com"
+                               size="md"/>
+                    <PasswordInput
+                        withAsterisk
+                        {...form.getInputProps('password')}
+                        label="Password"
+                        placeholder="Your password"
+                        mt="md" size="md"/>
+                    <Button fullWidth mt="xl" size="md" type={"submit"}>
+                        Login
+                    </Button>
+                </form>
 
                 <Text ta="center" mt="md">
                     Don&apos;t have an account?{' '}
