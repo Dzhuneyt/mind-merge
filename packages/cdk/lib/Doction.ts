@@ -3,6 +3,7 @@ import {Construct} from 'constructs';
 import {UserPool} from "aws-cdk-lib/aws-cognito";
 import {CfnOutput} from "aws-cdk-lib";
 import {IdentityPool, UserPoolAuthenticationProvider} from "@aws-cdk/aws-cognito-identitypool-alpha";
+import {UserPoolEmail} from "aws-cdk-lib/aws-cognito";
 
 export class Doction extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -11,6 +12,10 @@ export class Doction extends cdk.Stack {
         const userPool = new UserPool(this, 'UserPool', {
             selfSignUpEnabled: true,
             removalPolicy: cdk.RemovalPolicy.DESTROY,
+            signInAliases: {
+                email: true,
+            },
+            email: UserPoolEmail.withCognito(),
         })
         new CfnOutput(userPool, 'UserPoolId', {
             value: userPool.userPoolId,

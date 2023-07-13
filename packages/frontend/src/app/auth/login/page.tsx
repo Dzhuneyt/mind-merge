@@ -3,6 +3,8 @@ import {Anchor, Button, createStyles, Paper, PasswordInput, rem, Text, TextInput
 import {useForm} from "@mantine/form";
 import Auth from '@aws-amplify/auth';
 import {useCallback} from "react";
+import {useRouter} from "next/navigation";
+import {Authenticator} from "@aws-amplify/ui-react";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -31,8 +33,9 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export function AuthenticationImage() {
+export function Login() {
     const {classes} = useStyles();
+    const router = useRouter();
 
     const form = useForm({
         initialValues: {
@@ -80,7 +83,7 @@ export function AuthenticationImage() {
 
                 <Text ta="center" mt="md">
                     Don&apos;t have an account?{' '}
-                    <Anchor<'a'> href="#" weight={700} onClick={(event) => event.preventDefault()}>
+                    <Anchor<'a'> href="#" weight={700} onClick={(event) => router.push('/auth/register')}>
                         Register
                     </Anchor>
                 </Text>
@@ -89,4 +92,4 @@ export function AuthenticationImage() {
     );
 }
 
-export default AuthenticationImage
+export default Login
