@@ -4,6 +4,7 @@ import './globals.css'
 import {Inter} from 'next/font/google'
 import {MantineProvider} from '@mantine/core';
 import {Amplify} from "aws-amplify";
+import {Notifications} from "@mantine/notifications";
 
 
 const inter = Inter({subsets: ['latin']})
@@ -26,6 +27,7 @@ export default function RootLayout({
         <html lang="en">
         <body className={inter.className}>
         <MantineProvider withGlobalStyles withNormalizeCSS>
+            <Notifications/>
             {children}
         </MantineProvider>
         </body>
