@@ -2,8 +2,11 @@
 import {Anchor, Button, createStyles, Paper, PasswordInput, rem, Text, TextInput, Title,} from '@mantine/core';
 import {useForm} from "@mantine/form";
 import Auth from '@aws-amplify/auth';
-import {FC, useCallback, useState} from "react";
-import {useRouter} from "next/navigation";
+import {FC, useCallback, useMemo, useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import {useRouter as useCurrentRoute} from 'next/router'
+
+import {notifications} from "@mantine/notifications";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -32,9 +35,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const Step1: FC<{
-    onSuccess: (email: string, password: string) => void,
-}> = (props) => {
+const Step1: FC<{}> = (props) => {
     const router = useRouter();
 
     const form = useForm({
@@ -64,19 +65,29 @@ const Step1: FC<{
     });
 
     const register = useCallback(async (email: string, password: string) => {
-        const r = await Auth.signUp({
-            username: email,
-            password,
-            autoSignIn: {
-                enabled: true,
-            },
-            attributes: {
-                email,
-            },
-        })
+        try {
+            const r = await Auth.signUp({
+                username: email,
+                password,
+                autoSignIn: {
+                    enabled: true,
+                },
+                attributes: {
+                    email,
+                },
+            })
 
-        props.onSuccess(email, password);
-    }, [props.onSuccess])
+            // props.onSuccess(email, password);
+            router.push(`/auth/register?email=${encodeURIComponent(email)}`);
+        } catch (e) {
+            console.error(e);
+            if ((e as string).toString().includes('UsernameExistsException')) {
+                notifications.show({
+                    message: 'Email already registered. Please, try logging in',
+                })
+            }
+        }
+    }, [])
 
     return (
 
@@ -112,7 +123,6 @@ const Step1: FC<{
 
 const Step2: FC<{
     email: string,
-    password: string,
 }> = (props) => {
     const router = useRouter();
 
@@ -127,11 +137,17 @@ const Step2: FC<{
     });
 
     const otpComplete = useCallback(async (code: string) => {
+        console.log(props.email)
         const r = await Auth.confirmSignUp(props.email, code)
-        console.log(r);
-        const r2 = await Auth.signIn(props.email, props.password);
-        console.log(r2);
-    }, [props.email])
+        if (r === 'SUCCESS') {
+            notifications.show({
+                message: 'Registration successful! You can now log in',
+            })
+            router.push('/auth/login')
+            return
+        }
+        console.error(r);
+    }, [props.email, router])
 
     return (
 
@@ -155,31 +171,22 @@ const Step2: FC<{
     );
 }
 
-export function Login() {
+export function Register() {
     const {classes} = useStyles();
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [step, setStep] = useState<number>(1);
+    const searchParams = useSearchParams()
 
-    const onStep1Success = useCallback((email: string, password: string) => {
-        setEmail(email);
-        setPassword(password);
-        setStep(2)
-    }, [])
-
+    const email = searchParams.has('email') ? decodeURIComponent(searchParams.get('email') as string) : null
     return <>
         <div className={classes.wrapper}>
             <Paper className={classes.form} radius={0} p={30}>
                 <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
                     Join Doction!
                 </Title>
-                {step === 1 && <Step1 onSuccess={onStep1Success}/>}
-                {step === 2 && <Step2 email={email} password={password}/>}
-
-
+                {!email && <Step1/>}
+                {email && <Step2 email={email}/>}
             </Paper>
         </div>
     </>
 }
 
-export default Login
+export default Register

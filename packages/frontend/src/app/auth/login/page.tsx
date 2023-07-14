@@ -49,12 +49,15 @@ export function Login() {
     });
 
     const login = useCallback(async (email: string, password: string) => {
-        const r = await Auth.signIn({
+        const auth = await Auth.signIn({
             username: email,
             password,
         })
-        console.log(r);
-    }, [])
+        const uuid = auth.username
+        if (uuid) {
+            router.push('/docs/list')
+        }
+    }, [router])
     return (
         <div className={classes.wrapper}>
             <Paper className={classes.form} radius={0} p={30}>
