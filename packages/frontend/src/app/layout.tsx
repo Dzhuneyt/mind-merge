@@ -5,7 +5,7 @@ import {Inter} from 'next/font/google'
 import {MantineProvider} from '@mantine/core';
 import {Amplify, Logger} from "aws-amplify";
 import {Notifications} from "@mantine/notifications";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import Auth from "@aws-amplify/auth";
 import {Hub} from "@aws-amplify/core";
 import {useRouter} from "next/navigation";
@@ -109,7 +109,7 @@ const useAuthEvents = () => {
                     break;
             }
         });
-    }, [])
+    }, [router])
 }
 
 const RootLayout = ({children}: {

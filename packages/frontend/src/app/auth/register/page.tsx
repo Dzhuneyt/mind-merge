@@ -2,9 +2,8 @@
 import {Anchor, Button, createStyles, Paper, PasswordInput, rem, Text, TextInput, Title,} from '@mantine/core';
 import {useForm} from "@mantine/form";
 import Auth from '@aws-amplify/auth';
-import {FC, useCallback, useMemo, useState} from "react";
+import {FC, useCallback} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
-import {useRouter as useCurrentRoute} from 'next/router'
 
 import {notifications} from "@mantine/notifications";
 
@@ -35,7 +34,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const Step1: FC<{}> = (props) => {
+const Step1: FC = () => {
     const router = useRouter();
 
     const form = useForm({
@@ -66,7 +65,7 @@ const Step1: FC<{}> = (props) => {
 
     const register = useCallback(async (email: string, password: string) => {
         try {
-            const r = await Auth.signUp({
+            await Auth.signUp({
                 username: email,
                 password,
                 autoSignIn: {
@@ -77,7 +76,6 @@ const Step1: FC<{}> = (props) => {
                 },
             })
 
-            // props.onSuccess(email, password);
             router.push(`/auth/register?email=${encodeURIComponent(email)}`);
         } catch (e) {
             console.error(e);
@@ -87,7 +85,7 @@ const Step1: FC<{}> = (props) => {
                 })
             }
         }
-    }, [])
+    }, [router])
 
     return (
 
@@ -113,7 +111,7 @@ const Step1: FC<{}> = (props) => {
 
             <Text ta="center" mt="md">
                 Already have an account?{' '}
-                <Anchor<'a'> href="#" weight={700} onClick={(event) => router.push('/auth/login')}>
+                <Anchor<'a'> href="#" weight={700} onClick={(_) => router.push('/auth/login')}>
                     Sign in
                 </Anchor>
             </Text>
@@ -170,7 +168,7 @@ const Step2: FC<{
     );
 }
 
-export function Register() {
+function Register() {
     const {classes} = useStyles();
     const searchParams = useSearchParams()
 
