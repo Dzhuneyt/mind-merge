@@ -14,6 +14,9 @@ importers:
       aws-cdk-lib:
         specifier: 2.85.0
         version: 2.85.0(constructs@10.0.0)
+      awscdk-appsync-utils:
+        specifier: ^0.0.149
+        version: 0.0.149(aws-cdk-lib@2.85.0)(constructs@10.0.0)
       constructs:
         specifier: ^10.0.0
         version: 10.0.0
@@ -5689,6 +5692,16 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /awscdk-appsync-utils@0.0.149(aws-cdk-lib@2.85.0)(constructs@10.0.0):
+    resolution: {integrity: sha512-BnmckAYi98LEX4Ie+rDDxpmHVnOyLXPF5X3WeV1w1L5QELeXV3jvF3R5bEHKBuC8qUPO38Vvx1Rm3Jk9rM3EpA==}
+    peerDependencies:
+      aws-cdk-lib: ^2.60.0
+      constructs: ^10.0.5
+    dependencies:
+      aws-cdk-lib: 2.85.0(constructs@10.0.0)
+      constructs: 10.0.0
+    dev: false
 
   /axe-core@4.7.2:
     resolution: {integrity: sha512-zIURGIS1E1Q4pcrMjp+nnEh+16G56eG/MUllJH8yEvw7asDo7Ac9uhC9KIH5jzpITueEZolfYglnCGIuSBz39g==}
