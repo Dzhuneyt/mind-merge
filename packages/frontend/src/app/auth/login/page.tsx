@@ -4,7 +4,7 @@ import {useForm} from "@mantine/form";
 import Auth from '@aws-amplify/auth';
 import {useCallback} from "react";
 import {useRouter} from "next/navigation";
-import {Authenticator} from "@aws-amplify/ui-react";
+import {NextPage} from "next";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export function Login() {
+const Login: NextPage = () => {
     const {classes} = useStyles();
     const router = useRouter();
 
@@ -86,13 +86,13 @@ export function Login() {
 
                 <Text ta="center" mt="md">
                     Don&apos;t have an account?{' '}
-                    <Anchor<'a'> href="#" weight={700} onClick={(event) => router.push('/auth/register')}>
+                    <Anchor<'a'> href="#" weight={700} onClick={(_) => router.push('/auth/register')}>
                         Register
                     </Anchor>
                 </Text>
             </Paper>
         </div>
     );
-}
+};
 
 export default Login
