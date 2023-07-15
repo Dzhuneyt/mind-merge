@@ -137,7 +137,6 @@ const Step2: FC<{
     });
 
     const otpComplete = useCallback(async (code: string) => {
-        console.log(props.email)
         const r = await Auth.confirmSignUp(props.email, code)
         if (r === 'SUCCESS') {
             notifications.show({
