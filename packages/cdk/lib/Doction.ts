@@ -1,11 +1,14 @@
 import * as cdk from 'aws-cdk-lib';
-import {CfnOutput} from 'aws-cdk-lib';
+import {CfnOutput, Stack} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {UserPool, UserPoolEmail} from "aws-cdk-lib/aws-cognito";
 import {IdentityPool, UserPoolAuthenticationProvider} from "@aws-cdk/aws-cognito-identitypool-alpha";
 import {FieldLogLevel, GraphqlApi} from "aws-cdk-lib/aws-appsync";
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
 import {CodeFirstSchema, GraphqlType, ObjectType} from "awscdk-appsync-utils";
+import {NodejsFunction} from "aws-cdk-lib/aws-lambda-nodejs";
+import * as path from "path";
+import {Runtime} from "aws-cdk-lib/aws-lambda";
 
 export class Doction extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -51,16 +54,13 @@ export class Doction extends cdk.Stack {
     private createAppSyncApi() {
         const schema = new CodeFirstSchema()
 
-        schema.addType(new ObjectType('demo', {
+        const typeDemo = schema.addType(new ObjectType('demo', {
             definition: {id: GraphqlType.id()},
         }));
-        schema.addType(new ObjectType('Query', {
-            definition: {},
-        }));
 
-        new GraphqlApi(this, 'api', {
+        const api = new GraphqlApi(this, 'GraphqlApi', {
             authorizationConfig: {},
-            name: 'GraphqlApi',
+            name: `${Stack.of(this).stackName}-GraphqlApi`,
             schema,
             logConfig: {
                 fieldLogLevel: FieldLogLevel.ALL,
@@ -68,5 +68,26 @@ export class Doction extends cdk.Stack {
                 excludeVerboseContent: true,
             },
         });
+
+        new NodejsFunction(this, 'DocumentsFunction', {
+            entry: path.resolve(__dirname, './lambda/listDocuments.ts'),
+            runtime: Runtime.NODEJS_18_X,
+        })
+        // api.addLambdaDataSource('fn-listDocuments', new NodejsFunction(this, 'NodejsFunction-listDocuments', {
+        //     entry: path.resolve(__dirname, 'lambda/getDemo.ts'),
+        // }))
+        // schema.addQuery('documents', new ResolvableField({
+        //     returnType: typeDemo.attribute({isList: true}),
+        //     dataSource: new LambdaDataSource(this, 'DocumentsDataSource', {
+        //         api,
+        //         lambdaFunction: new NodejsFunction(this, 'DocumentsFunction', {
+        //             entry: path.resolve(__dirname, 'lambda/listDocuments.ts'),
+        //         }),
+        //     }),
+        // }))
+
+        new CfnOutput(api, 'GraphqlApiUrl', {
+            value: api.graphqlUrl,
+        })
     }
 }
