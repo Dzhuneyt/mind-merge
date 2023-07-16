@@ -3,14 +3,16 @@ import {CfnOutput, Stack} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {UserPool, UserPoolEmail} from "aws-cdk-lib/aws-cognito";
 import {IdentityPool, UserPoolAuthenticationProvider} from "@aws-cdk/aws-cognito-identitypool-alpha";
-import {FieldLogLevel, GraphqlApi} from "aws-cdk-lib/aws-appsync";
+import {AuthorizationType, FieldLogLevel, GraphqlApi, UserPoolDefaultAction} from "aws-cdk-lib/aws-appsync";
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
-import {CodeFirstSchema, GraphqlType, ObjectType} from "awscdk-appsync-utils";
+import {CodeFirstSchema, Directive, GraphqlType, ObjectType, ResolvableField} from "awscdk-appsync-utils";
 import {NodejsFunction} from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "path";
 import {Runtime} from "aws-cdk-lib/aws-lambda";
 
 export class Doction extends cdk.Stack {
+    private userPool: UserPool;
+
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -19,7 +21,7 @@ export class Doction extends cdk.Stack {
     }
 
     private createUserPool() {
-        const userPool = new UserPool(this, 'UserPool', {
+        this.userPool = new UserPool(this, 'UserPool', {
             selfSignUpEnabled: true,
             removalPolicy: cdk.RemovalPolicy.DESTROY,
             signInAliases: {
@@ -27,20 +29,20 @@ export class Doction extends cdk.Stack {
             },
             email: UserPoolEmail.withCognito(),
         })
-        new CfnOutput(userPool, 'UserPoolId', {
-            value: userPool.userPoolId,
+        new CfnOutput(this.userPool, 'UserPoolId', {
+            value: this.userPool.userPoolId,
         })
 
         const identityPool = new IdentityPool(this, 'IdentityPool', {
             authenticationProviders: {
-                userPools: [new UserPoolAuthenticationProvider({userPool})],
+                userPools: [new UserPoolAuthenticationProvider({userPool: this.userPool})],
             },
         });
         new CfnOutput(identityPool, 'IdentityPoolId', {
             value: identityPool.identityPoolId,
         })
 
-        const userPoolClient = userPool.addClient('web', {
+        const userPoolClient = this.userPool.addClient('web', {
             authFlows: {
                 userPassword: true,
                 userSrp: true,
@@ -54,12 +56,28 @@ export class Doction extends cdk.Stack {
     private createAppSyncApi() {
         const schema = new CodeFirstSchema()
 
-        const typeDemo = schema.addType(new ObjectType('demo', {
+        const DirectiveCognito = Directive.custom('@aws_cognito_user_pools')
+
+        const DocumentType = schema.addType(new ObjectType('Document', {
             definition: {id: GraphqlType.id()},
+            directives: [DirectiveCognito]
         }));
 
         const api = new GraphqlApi(this, 'GraphqlApi', {
-            authorizationConfig: {},
+            authorizationConfig: {
+                defaultAuthorization: {
+                    authorizationType: AuthorizationType.API_KEY,
+                },
+                additionalAuthorizationModes: [
+                    {
+                        authorizationType: AuthorizationType.USER_POOL,
+                        userPoolConfig: {
+                            userPool: this.userPool,
+                            defaultAction: UserPoolDefaultAction.ALLOW,
+                        },
+                    }
+                ],
+            },
             name: `${Stack.of(this).stackName}-GraphqlApi`,
             schema,
             logConfig: {
@@ -69,22 +87,15 @@ export class Doction extends cdk.Stack {
             },
         });
 
-        new NodejsFunction(this, 'DocumentsFunction', {
+        const datasourceListDocuments = api.addLambdaDataSource('listDocuments', new NodejsFunction(this, 'fn-listDocuments.ts', {
             entry: path.resolve(__dirname, './lambda/listDocuments.ts'),
             runtime: Runtime.NODEJS_18_X,
-        })
-        // api.addLambdaDataSource('fn-listDocuments', new NodejsFunction(this, 'NodejsFunction-listDocuments', {
-        //     entry: path.resolve(__dirname, 'lambda/getDemo.ts'),
-        // }))
-        // schema.addQuery('documents', new ResolvableField({
-        //     returnType: typeDemo.attribute({isList: true}),
-        //     dataSource: new LambdaDataSource(this, 'DocumentsDataSource', {
-        //         api,
-        //         lambdaFunction: new NodejsFunction(this, 'DocumentsFunction', {
-        //             entry: path.resolve(__dirname, 'lambda/listDocuments.ts'),
-        //         }),
-        //     }),
-        // }))
+        }))
+        schema.addQuery('documents', new ResolvableField({
+            returnType: DocumentType.attribute({isList: true}),
+            dataSource: datasourceListDocuments,
+            directives: [DirectiveCognito],
+        }))
 
         new CfnOutput(api, 'GraphqlApiUrl', {
             value: api.graphqlUrl,
