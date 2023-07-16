@@ -20,9 +20,6 @@ importers:
       constructs:
         specifier: ^10.0.0
         version: 10.0.0
-      esbuild:
-        specifier: '0'
-        version: 0.0.0
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -41,7 +38,7 @@ importers:
         version: 29.5.0(@types/node@20.1.7)(ts-node@10.9.1)
       ts-jest:
         specifier: ^29.1.0
-        version: 29.1.0(@babel/core@7.22.9)(esbuild@0.0.0)(jest@29.5.0)(typescript@5.0.4)
+        version: 29.1.0(@babel/core@7.22.9)(jest@29.5.0)(typescript@5.0.4)
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@20.1.7)(typescript@5.0.4)
@@ -6635,9 +6632,6 @@ packages:
       is-symbol: 1.0.4
     dev: false
 
-  /esbuild@0.0.0:
-    resolution: {integrity: sha512-mFH2NQiWPz0p48pP+Uzy39rTrn+xUYOSFBDGbUhtqnpze4JagLA3DSxryGej/pw8TgckPcE6fjhk+8O9PBX8TA==}
-
   /escalade@3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
     engines: {node: '>=6'}
@@ -10382,7 +10376,7 @@ packages:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     dev: false
 
-  /ts-jest@29.1.0(@babel/core@7.22.9)(esbuild@0.0.0)(jest@29.5.0)(typescript@5.0.4):
+  /ts-jest@29.1.0(@babel/core@7.22.9)(jest@29.5.0)(typescript@5.0.4):
     resolution: {integrity: sha512-ZhNr7Z4PcYa+JjMl62ir+zPiNJfXJN6E8hSLnaUKhOgqcn8vb3e537cpkd0FuAfRK3sR1LSqM1MOhliXNgOFPA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     hasBin: true
@@ -10405,7 +10399,6 @@ packages:
     dependencies:
       '@babel/core': 7.22.9
       bs-logger: 0.2.6
-      esbuild: 0.0.0
       fast-json-stable-stringify: 2.1.0
       jest: 29.5.0(@types/node@20.1.7)(ts-node@10.9.1)
       jest-util: 29.6.1
