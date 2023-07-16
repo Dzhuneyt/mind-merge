@@ -24,6 +24,7 @@
     "aws-cdk-lib": "2.85.0",
     "awscdk-appsync-utils": "^0.0.149",
     "constructs": "^10.0.0",
+    "esbuild": "0",
     "source-map-support": "^0.5.21"
   }
 }
