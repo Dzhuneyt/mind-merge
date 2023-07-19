@@ -2,13 +2,18 @@
 
 import {useEffect} from "react";
 import {useUser} from "@/hooks/useUser";
+import apolloClient from "@/graphql/apolloClient";
+import {gql, useQuery} from "@apollo/client";
 
 const DiaryList = () => {
-    const {user, idToken} = useUser()
-
-    useEffect(() => {
-        console.log('access token', idToken)
-    }, [idToken])
+    const QUERY = gql`
+        query MyQuery {
+            documents {
+                id
+            }
+        }
+    `
+    const {data, loading, error} = useQuery(QUERY);
 
     return "My documents list"
 }

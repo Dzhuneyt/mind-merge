@@ -9,6 +9,8 @@ import {useEffect} from "react";
 import Auth from "@aws-amplify/auth";
 import {Hub} from "@aws-amplify/core";
 import {useRouter} from "next/navigation";
+import {ApolloProvider} from "@apollo/client";
+import apolloClient from "@/graphql/apolloClient";
 
 
 const inter = Inter({subsets: ['latin']})
@@ -127,7 +129,9 @@ const RootLayout = ({children}: {
         <body className={inter.className}>
         <MantineProvider withGlobalStyles withNormalizeCSS>
             <Notifications/>
-            {children}
+            <ApolloProvider client={apolloClient}>
+                {children}
+            </ApolloProvider>
         </MantineProvider>
         </body>
         </html>
