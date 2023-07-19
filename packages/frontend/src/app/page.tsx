@@ -1,9 +1,18 @@
-import styles from './page.module.css'
+'use client';
+import {useEffect} from "react";
+import Auth from "@aws-amplify/auth";
+import {useRouter} from "next/navigation";
 
 export default function Home() {
-    return (
-        <main className={styles.main}>
-            Hello world index page
-        </main>
-    )
+    const router = useRouter();
+    useEffect(() => {
+        Auth.currentAuthenticatedUser().then((user) => {
+            if (user) {
+                router.push('/docs/list');
+            } else {
+                router.push('/auth/signin');
+            }
+        })
+    }, [router])
+    return <></>
 }
