@@ -1,7 +1,8 @@
-import {FC, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {Button, Flex, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {gql, useMutation} from "@apollo/client";
+import {useRouter} from "next/navigation";
 
 const MUTATION = gql`
     mutation AddDocument($title: String!) {
@@ -22,6 +23,7 @@ const Form: FC<{
             title: (value) => (value ? null : 'Title is required'),
         },
     });
+    const router = useRouter();
 
     const [mutateFunction, {data, loading, error}] = useMutation<{
         addDocument: {
@@ -29,7 +31,13 @@ const Form: FC<{
         },
     }>(MUTATION);
 
-    console.log('data', data, 'loading', loading, 'error', error);
+    useEffect(() => {
+        const id = data?.addDocument.id;
+        if (!id) {
+            return;
+        }
+        router.push(`/docs/edit/${id}`);
+    }, [data?.addDocument.id, router])
 
     return <form onSubmit={form.onSubmit((values) => {
         console.log(values)
