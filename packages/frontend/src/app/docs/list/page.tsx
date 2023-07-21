@@ -1,11 +1,8 @@
 'use client';
 
-import {useEffect} from "react";
-import {useUser} from "@/hooks/useUser";
-import apolloClient from "@/graphql/apolloClient";
 import {gql, useQuery} from "@apollo/client";
 
-const DiaryList = () => {
+const DocumentsList = () => {
     const QUERY = gql`
         query MyQuery {
             documents {
@@ -14,7 +11,8 @@ const DiaryList = () => {
         }
     `
     const {data, loading, error} = useQuery(QUERY);
+    console.log(data, loading, error)
 
     return "My documents list"
 }
-export default DiaryList
+export default DocumentsList
