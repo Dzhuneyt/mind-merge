@@ -162,6 +162,10 @@ export class Doction extends cdk.Stack {
                 createdAt: GraphqlType.string(),
                 updatedAt: GraphqlType.string(),
             },
+            args: {
+                // Can filter documents by author
+                idAuthor: GraphqlType.string({isRequired: false}),
+            },
             lambda: new NodejsFunction(this, './lambda/listDocuments.ts', {
                 entry: path.resolve(__dirname, './lambda/listDocuments.ts'),
                 runtime: Runtime.NODEJS_18_X,
@@ -218,9 +222,9 @@ export class Doction extends cdk.Stack {
             billingMode: BillingMode.PAY_PER_REQUEST,
         })
         table.addGlobalSecondaryIndex({
-            indexName: 'idUser',
+            indexName: 'idAuthor',
             partitionKey: {
-                name: 'idUser',
+                name: 'idAuthor',
                 type: AttributeType.STRING,
             },
         })

@@ -3,7 +3,7 @@ import {monotonicFactory} from "ulid";
 
 export const handler = async (event: any) => {
     const title = event.arguments.title as string;
-    const idUser = event.identity.claims.sub as string;
+    const idAuthor = event.identity.claims.sub as string;
 
     const uuid = monotonicFactory()
     const id = uuid();
@@ -13,7 +13,7 @@ export const handler = async (event: any) => {
         Item: {
             id: {S: id},
             title: {S: title},
-            idUser: {S: idUser},
+            idAuthor: {S: idAuthor},
             created_at: {N: `${Math.round(Date.now() / 1000)}`},
         },
     }))
