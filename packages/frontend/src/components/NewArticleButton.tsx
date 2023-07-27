@@ -1,8 +1,9 @@
 import {FC, useEffect, useState} from "react";
-import {Button, Flex, TextInput} from "@mantine/core";
+import {Button, Flex, LoadingOverlay, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {gql, useMutation} from "@apollo/client";
 import {useRouter} from "next/navigation";
+import {showNotification} from "@mantine/notifications";
 
 const MUTATION = gql`
     mutation AddDocument($title: String!) {
@@ -39,6 +40,19 @@ const Form: FC<{
         router.push(`/docs/edit/${id}`);
     }, [data?.addDocument.id, router])
 
+    if (loading) {
+        return <div>
+            <LoadingOverlay visible={true}/>
+        </div>
+    }
+
+    if (error) {
+        showNotification({
+            title: 'Error creating document',
+            message: error.message,
+        })
+    }
+
     return <form onSubmit={form.onSubmit((values) => {
         console.log(values)
         mutateFunction({
@@ -53,7 +67,7 @@ const Form: FC<{
 
             <TextInput
                 withAsterisk
-                placeholder="Cool document name"
+                placeholder="How to do X?"
                 {...form.getInputProps('title')}
             />
 
@@ -64,11 +78,11 @@ const Form: FC<{
         </Flex>
     </form>
 }
-export const QuickDocCreatorField: FC = () => {
+export const NewArticleButton: FC = () => {
     const [formVisible, setFormVisible] = useState(false);
 
     if (!formVisible) {
-        return <Button onClick={() => setFormVisible(true)}>Create a new document</Button>
+        return <Button onClick={() => setFormVisible(true)}>Create a new article</Button>
     }
 
     return <Form onCancel={() => setFormVisible(false)}/>
