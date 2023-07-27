@@ -1,10 +1,11 @@
 'use client';
 import {Anchor, Button, createStyles, Paper, PasswordInput, rem, Text, TextInput, Title,} from '@mantine/core';
 import {useForm} from "@mantine/form";
-import Auth from '@aws-amplify/auth';
+import {Auth} from '@aws-amplify/auth';
 import {useCallback} from "react";
 import {useRouter} from "next/navigation";
 import {NextPage} from "next";
+import {showNotification} from "@mantine/notifications";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -49,14 +50,25 @@ const Login: NextPage = () => {
     });
 
     const login = useCallback(async (email: string, password: string) => {
-        const auth = await Auth.signIn({
+        Auth.signIn({
             username: email,
-            password,
+            password
+        }).then((auth) => {
+            const uuid = auth.username
+            if (uuid) {
+                router.push('/docs/list')
+            }
+        }).catch((e) => {
+            if (e.toString().includes('UserNotFoundException')) {
+                showNotification({
+                    title: 'Invalid credentials',
+                    message: 'This user was not found. Please register first.',
+                })
+                router.push('/auth/register')
+                return
+            }
+            throw e; // otherwise, re-throw the error
         })
-        const uuid = auth.username
-        if (uuid) {
-            router.push('/docs/list')
-        }
     }, [router])
     return (
         <div className={classes.wrapper}>

@@ -38,7 +38,7 @@ const useAuthEvents = () => {
                     break;
                 case 'signIn':
                     logger.info('user signed in');
-                    router.push('/diary');
+                    router.push('/');
                     break;
                 case 'signIn_failure':
                     logger.error('user sign in failed');

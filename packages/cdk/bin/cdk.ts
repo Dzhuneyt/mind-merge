@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import {Doction} from '../lib/Doction';
+import {MindMergeStack} from '../lib/MindMergeStack';
 
 const app = new cdk.App();
-new Doction(app, 'Doction', {
+new MindMergeStack(app, 'mind-merge', {
     env: {account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION},
 });

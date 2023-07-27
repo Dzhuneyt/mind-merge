@@ -4,10 +4,8 @@ import {unmarshall} from "@aws-sdk/util-dynamodb";
 export const handler = async (event: any) => {
     const idAuthor = event.arguments.idAuthor;
 
-    console.log('idAuthor', idAuthor);
-
     const queryResult = await new DynamoDB({}).scan({
-        TableName: 'Doction-Documents',
+        TableName: `${process.env.TABLE_NAME_DOCUMENTS}`,
     })
 
     const items = (queryResult.Items ?? []).map(x => unmarshall(x))

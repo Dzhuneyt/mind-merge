@@ -1,7 +1,7 @@
 'use client';
 import {useEffect} from "react";
-import Auth from "@aws-amplify/auth";
 import {useRouter} from "next/navigation";
+import {Auth} from "@aws-amplify/auth";
 
 export default function Home() {
     const router = useRouter();
@@ -10,8 +10,16 @@ export default function Home() {
             if (user) {
                 router.push('/docs/list');
             } else {
-                router.push('/auth/signin');
+                router.push('/auth/login');
             }
+        }).catch((e) => {
+            if (e.toString().includes('The user is not authenticated')) {
+                router.push('/auth/login');
+                return;
+            }
+
+            // otherwise, re-throw the error
+            throw e;
         })
     }, [router])
     return <></>
