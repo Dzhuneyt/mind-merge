@@ -8,10 +8,10 @@ import {RetentionDays} from "aws-cdk-lib/aws-logs";
 import {CodeFirstSchema, Directive, GraphqlType, ObjectType, ResolvableField} from "awscdk-appsync-utils";
 import {NodejsFunction} from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "path";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import {Runtime} from "aws-cdk-lib/aws-lambda";
 import {IField} from "awscdk-appsync-utils/lib/schema-base";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import {AttributeType, Table} from "aws-cdk-lib/aws-dynamodb";
+import {AttributeType, BillingMode, Table} from "aws-cdk-lib/aws-dynamodb";
 import {StringParameter} from "aws-cdk-lib/aws-ssm";
 import {PolicyStatement} from "aws-cdk-lib/aws-iam";
 
@@ -165,6 +165,12 @@ export class Doction extends cdk.Stack {
             lambda: new NodejsFunction(this, './lambda/listDocuments.ts', {
                 entry: path.resolve(__dirname, './lambda/listDocuments.ts'),
                 runtime: Runtime.NODEJS_18_X,
+                initialPolicy: [
+                    new PolicyStatement({
+                        actions: ['dynamodb:Scan'],
+                        resources: ['*'], // TODO: Refine to include only table names from this stack
+                    })
+                ],
             }),
         })
 
@@ -201,13 +207,22 @@ export class Doction extends cdk.Stack {
     }
 
     private createTables() {
-        const table = new Table(this, 'Documents', {
+        const TABLE_NAME = 'Documents';
+        const table = new Table(this, TABLE_NAME, {
             tableName: `${Stack.of(this).stackName}-Documents`,
             partitionKey: {
                 name: 'id',
                 type: AttributeType.STRING,
             },
             removalPolicy: cdk.RemovalPolicy.DESTROY,
+            billingMode: BillingMode.PAY_PER_REQUEST,
+        })
+        table.addGlobalSecondaryIndex({
+            indexName: 'idUser',
+            partitionKey: {
+                name: 'idUser',
+                type: AttributeType.STRING,
+            },
         })
         new StringParameter(table, 'StringParameter', {
             parameterName: '/Doction/Documents/TableName',
