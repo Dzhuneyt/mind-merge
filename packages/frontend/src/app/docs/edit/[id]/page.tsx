@@ -1,36 +1,12 @@
 'use client';
 import {useForm} from "@mantine/form";
-import {Box, Button, Group, LoadingOverlay, Textarea, TextInput} from "@mantine/core";
-import {gql, useMutation, useQuery} from "@apollo/client";
+import {Box, Button, Flex, Group, LoadingOverlay, Textarea, TextInput} from "@mantine/core";
+import {gql, useMutation} from "@apollo/client";
 import {useParams} from "next/navigation";
 import {useEffect} from "react";
 import {showNotification} from "@mantine/notifications";
-import {KBDocument} from "@/models/KBDocument";
-
-function useSingleDocument(id: string) {
-    const QUERY = gql`
-        query GetDocument($id: String!) {
-            document(id: $id) {
-                id
-                title
-                content
-            }
-        }
-    `
-
-    const {data, loading, error} = useQuery<{
-        document: KBDocument,
-    }>(QUERY, {
-        variables: {
-            id,
-        }
-    });
-    return {
-        data,
-        loading,
-        error
-    }
-}
+import ReactMarkdown from 'react-markdown'
+import {useSingleDocument} from "@/hooks/useSingleDocument";
 
 function useSingleDocumentUpdater(id: string) {
     const QUERY = gql`
@@ -81,6 +57,14 @@ const EditPage = () => {
         data?.document.content && form.setFieldValue('content', data.document.content);
     }, [data?.document, form.setFieldValue]);
 
+
+    useEffect(() => {
+        showNotification({
+            title: 'Error',
+            message: error?.message,
+        })
+    }, [error?.message])
+
     if (loading) {
         return <Box>
             <LoadingOverlay visible={loading}/>
@@ -104,11 +88,23 @@ const EditPage = () => {
                     placeholder="My cool article"
                     {...form.getInputProps('title')}
                 />
-                <Textarea
-                    withAsterisk
-                    label="Content (Markdown)"
-                    {...form.getInputProps('content')}
-                />
+                <Flex direction={'row'} gap={'md'}>
+                    <Box w={'50%'}>
+                        <Textarea
+                            withAsterisk
+                            autosize
+                            minRows={8}
+                            label="Content (Markdown)"
+                            {...form.getInputProps('content')}
+                        />
+                    </Box>
+
+                    <Box w={'50%'}>
+                        <ReactMarkdown>
+                            {form.values.content}
+                        </ReactMarkdown>
+                    </Box>
+                </Flex>
 
                 <Group position="right" mt="md">
                     <Button type="submit">Publish</Button>

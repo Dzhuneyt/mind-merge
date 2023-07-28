@@ -1,7 +1,11 @@
 import {KBDocument} from "@/models/KBDocument";
 import {AspectRatio, BackgroundImage, Card, Text} from "@mantine/core";
+import Link from "next/link";
 
-export const DocumentCard = (props: { doc: KBDocument }) => <Card p="md" radius="md" component="a" href="#"
+export const DocumentCard = (props: { doc: KBDocument }) => <Card p="md"
+                                                                  radius="md"
+                                                                  component={Link}
+                                                                  href={`/docs/view/${props.doc.id}`}
                                                                   className={""}>
     <AspectRatio ratio={1920 / 1080}>
         <BackgroundImage
@@ -15,4 +19,5 @@ export const DocumentCard = (props: { doc: KBDocument }) => <Card p="md" radius=
     <Text className={""} mt={5}>
         {props.doc.title}
     </Text>
-</Card>;
+
+</Card>

@@ -34,7 +34,9 @@ const DocumentsList = () => {
 
     if (!data?.documents.length) {
         return <Box py="xl">
-            No documents yet
+            <p>
+                No articles available yet
+            </p>
         </Box>
     }
 
