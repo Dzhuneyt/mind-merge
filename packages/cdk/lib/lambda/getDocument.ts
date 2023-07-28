@@ -13,7 +13,7 @@ export const handler = async (event: any) => {
     }))
 
     if (!item.Item) {
-        throw new Error('Document not found');
+        throw new Error('Item not found');
     }
 
     return unmarshall(item.Item);

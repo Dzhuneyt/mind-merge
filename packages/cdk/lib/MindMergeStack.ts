@@ -169,6 +169,35 @@ export class MindMergeStack extends cdk.Stack {
             }),
         })
 
+        new SchemaOperation(this, 'Mutation-UpdateDocument', {
+            api,
+            schema,
+            operation: 'mutation',
+            fieldName: 'updateDocument',
+            isList: false,
+            fieldDefinition: {
+                id: GraphqlType.id(),
+            },
+            args: {
+                id: GraphqlType.string({isRequired: true}),
+                title: GraphqlType.string({isRequired: true}),
+                content: GraphqlType.string({isRequired: true}),
+            },
+            lambda: new NodejsFunction(this, './lambda/updateDocument.ts', {
+                entry: path.resolve(__dirname, './lambda/updateDocument.ts'),
+                runtime: Runtime.NODEJS_18_X,
+                environment: {
+                    TABLE_NAME_DOCUMENTS: `${Stack.of(this).stackName}-Documents`,
+                },
+                initialPolicy: [
+                    new PolicyStatement({
+                        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:GetItem'],
+                        resources: ['*'],
+                    })
+                ],
+            }),
+        })
+
         new CfnOutput(api, 'GraphqlApiUrl', {
             value: api.graphqlUrl,
         })
