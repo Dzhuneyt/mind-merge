@@ -13,9 +13,6 @@ export const DocumentCard = (props: { doc: KBDocument }) => <Card p="md"
             radius="sm"
         ></BackgroundImage>
     </AspectRatio>
-    <Text color="dimmed" size="xs" transform="uppercase" weight={700} mt="md">
-        27 July, 2023
-    </Text>
     <Text className={""} mt={5}>
         {props.doc.title}
     </Text>
