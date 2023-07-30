@@ -1,16 +1,20 @@
 'use client';
 
 import {gql, useQuery} from "@apollo/client";
-import {Box, Container, LoadingOverlay, SimpleGrid, Text} from "@mantine/core";
+import {Accordion, Box, Container, LoadingOverlay, Text, Title} from "@mantine/core";
 import {KBDocument} from "@/models/KBDocument";
-import {DocumentCard} from "@/components/DocumentCard";
+import {SingleDocumentPanel} from "@/components/SingleDocumentPanel";
+
 
 const DocumentsList = () => {
     const QUERY = gql`
-        query MyQuery {
+        query Query {
             documents {
                 id
                 title
+                content
+                created_at
+                idAuthor
             }
         }
     `
@@ -41,10 +45,10 @@ const DocumentsList = () => {
     }
 
     return <Container py="xl">
-        <SimpleGrid cols={2} breakpoints={[{maxWidth: 'sm', cols: 1}]}>
-            {data?.documents.map((doc) =>
-                <DocumentCard key={doc.id} doc={doc}/>)}
-        </SimpleGrid>
+        <Title order={1} align="center" mb={'xl'}>Knowledge base</Title>
+        <Accordion variant="separated">
+            {data?.documents.map((doc) => <SingleDocumentPanel key={doc.id} doc={doc}/>)}
+        </Accordion>
     </Container>
 }
 export default DocumentsList

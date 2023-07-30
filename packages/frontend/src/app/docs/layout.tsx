@@ -51,8 +51,8 @@ const MyDocumentsList: FC = () => {
         <h3>My articles</h3>
         <Box>
             {data?.documents.map((doc) => <>
-                <Anchor href={`/docs/view/${doc.id}`} component={Link}>
-                    <NavLink key={doc.id} label={doc.title}
+                <Anchor href={`/docs/view/${doc.id}`} component={Link} key={doc.id}>
+                    <NavLink label={doc.title}
                              icon={<IconArticle size="1rem"
                                                 stroke={1.5}/>}/>
                 </Anchor>
@@ -72,7 +72,7 @@ const DocsLayout: FC<PropsWithChildren> = ({children}) => (
         </Navbar>}
         header={<Header height={60} p="xs">
             <Anchor href={'/'} component={Link}>
-                MindMerge - Sharing Knowledge
+                MindMerge
             </Anchor>
         </Header>}
         styles={(theme) => ({

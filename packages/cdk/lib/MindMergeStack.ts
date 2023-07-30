@@ -89,9 +89,10 @@ export class MindMergeStack extends cdk.Stack {
             fieldDefinition: {
                 id: GraphqlType.id(),
                 title: GraphqlType.string(),
-                content: GraphqlType.string(),
-                createdAt: GraphqlType.string(),
-                updatedAt: GraphqlType.string(),
+                content: GraphqlType.string({isRequired: false}),
+                created_at: GraphqlType.awsTimestamp({isRequired: true}),
+                updated_at: GraphqlType.awsTimestamp({isRequired: false}),
+                idAuthor: GraphqlType.string({isRequired: true}),
             },
             args: {
                 // Can filter documents by author
@@ -118,11 +119,12 @@ export class MindMergeStack extends cdk.Stack {
             operation: 'query',
             fieldName: 'document',
             fieldDefinition: {
-                id: GraphqlType.id(),
-                title: GraphqlType.string(),
+                id: GraphqlType.id({isRequired: true}),
+                title: GraphqlType.string({isRequired: true}),
                 content: GraphqlType.string(),
-                createdAt: GraphqlType.string(),
+                createdAt: GraphqlType.string({isRequired: true}),
                 updatedAt: GraphqlType.string(),
+                idAuthor: GraphqlType.string({isRequired: true})
             },
             args: {
                 id: GraphqlType.string({isRequired: true}),
@@ -149,10 +151,10 @@ export class MindMergeStack extends cdk.Stack {
             fieldName: 'addDocument',
             isList: false,
             fieldDefinition: {
-                id: GraphqlType.id(),
+                id: GraphqlType.id({isRequired: true}),
             },
             args: {
-                title: GraphqlType.string(),
+                title: GraphqlType.string({isRequired: true}),
             },
             lambda: new NodejsFunction(this, './lambda/addDocument.ts', {
                 entry: path.resolve(__dirname, './lambda/addDocument.ts'),
@@ -176,7 +178,7 @@ export class MindMergeStack extends cdk.Stack {
             fieldName: 'updateDocument',
             isList: false,
             fieldDefinition: {
-                id: GraphqlType.id(),
+                id: GraphqlType.id({isRequired: true}),
             },
             args: {
                 id: GraphqlType.string({isRequired: true}),

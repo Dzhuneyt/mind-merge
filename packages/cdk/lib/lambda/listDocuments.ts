@@ -10,14 +10,14 @@ export const handler = async (event: any) => {
 
     const items = (queryResult.Items ?? []).map(x => unmarshall(x))
 
-    return items.filter(x => {
-        if (idAuthor) {
-            return x.idAuthor === idAuthor
-        }
-        return true;
-    }).map(item => ({
-        id: item.id,
-        title: item.title,
-        created_at: item.created_at,
-    }))
+    return items
+        .filter(x => idAuthor ? x.idAuthor === idAuthor : true)
+        .map(item => ({
+            id: item.id,
+            title: item.title,
+            content: item.content,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            idAuthor: item.idAuthor,
+        }))
 }
