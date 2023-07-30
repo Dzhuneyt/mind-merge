@@ -14,6 +14,7 @@ is AWS DynamoDB, with AWS Amplify handling the authentication (using an AWS Cogn
 ### Demo
 
 https://mind-merge-app.vercel.app
+
 Just sign up and start writing articles! Note that because this demo is publicly available, anybody can read them.
 
 ### Getting started
